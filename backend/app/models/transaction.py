@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
 from typing import Optional
+
+from app.models.charges import Charges
 from app.models.enums import TransactionType
 
 
@@ -13,8 +15,6 @@ class Transaction:
 
     trade_date: date
     symbol: str
-    # action: str          # BUY or SELL
-
 
     action: TransactionType
 
@@ -24,9 +24,7 @@ class Transaction:
 
     trade_value: Decimal
 
-    brokerage: Decimal
-
-    taxes: Decimal
+    charges: Charges
 
     exchange: str
 
