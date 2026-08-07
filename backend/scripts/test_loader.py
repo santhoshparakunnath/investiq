@@ -17,14 +17,11 @@ loader = ExcelLoader(excel_file)
 
 df = loader.load()
 
-print("\nFirst 5 rows")
-print("-" * 50)
-print(df.head())
+print(f"\nRows    : {df.shape[0]}")
+print(f"Columns : {df.shape[1]}")
 
-print("\nColumns")
-print("-" * 50)
-print(df.columns.tolist())
+print("\nColumn Names")
+print("=" * 60)
 
-print("\nShape")
-print("-" * 50)
-print(df.shape)
+for i, col in enumerate(df.columns):
+    print(f"{i+1:2d}. {col}")
