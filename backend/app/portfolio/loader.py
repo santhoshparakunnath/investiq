@@ -1,5 +1,4 @@
 from pathlib import Path
-
 import pandas as pd
 
 
@@ -7,10 +6,12 @@ class ExcelLoader:
     """Loads portfolio data from the broker Excel workbook."""
 
     def __init__(self, file_path: str):
-        self.file_path = Path(file_path)
+        self.file_path = Path(file_path).resolve()
 
     def load(self):
-        """Return transactions and holdings dataframes."""
+        """Return workbook as a dataframe."""
+
+        print(f"Reading file: {self.file_path}")
 
         workbook = pd.ExcelFile(self.file_path)
 
