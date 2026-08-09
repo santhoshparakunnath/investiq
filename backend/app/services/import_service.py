@@ -2,12 +2,13 @@ from fastapi import UploadFile
 
 
 class ImportService:
-    """
-    Coordinates the import of broker tradebooks.
-    """
 
-    async def import_files(self, files: list[UploadFile]) -> dict:
+    async def import_file(self, file: UploadFile):
+
+        content = await file.read()
 
         return {
-            "files_received": len(files)
+            "filename": file.filename,
+            "content_type": file.content_type,
+            "size": len(content)
         }

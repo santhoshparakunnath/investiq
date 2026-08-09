@@ -8,7 +8,7 @@ service = ImportService()
 
 
 @router.post("/")
-async def import_tradebooks(
-    files: list[UploadFile] = File(...)
+async def import_tradebook(
+    file: UploadFile = File(...)
 ):
-    return await service.import_files(files)
+    return await service.import_file(file)
