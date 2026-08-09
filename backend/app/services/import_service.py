@@ -1,7 +1,8 @@
 from fastapi import UploadFile
 
 from app.importers.icici_direct_importer import ICICIDirectImporter
-from app.importers.icici_direct_mapper import ICICIDirectMapper
+from app.models.import_result import ImportResult
+from app.models.import_summary import ImportSummary
 
 
 class ImportService:
@@ -12,7 +13,21 @@ class ImportService:
 
         transactions = importer.import_transactions(file.file)
 
-        return {
-            "filename": file.filename,
-            "transactions": transactions
-        }
+        if transactions:
+            first_trade_date = min(t.trade_date for t in transactions)
+            last_trade_date = max(t.trade_date for t in transactions)
+        else:
+            first_trade_date = None
+            last_trade_date = None
+
+        summary = ImportSummary(
+            broker="ICICI Direct",
+            transaction_count=len(transactions),
+            first_trade_date=first_trade_date,
+            last_trade_date=last_trade_date,
+        )
+
+        return ImportResult(
+            summary=summary,
+            transactions=transactions,
+        )
