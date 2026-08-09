@@ -14,6 +14,8 @@ class ImportResult:
 
     transactions: list[Transaction] = field(default_factory=list)
 
-    warnings: list[str] = field(default_factory=list)
+    from app.models.import_warning import ImportWarning
+
+    warnings: list[ImportWarning] = field(default_factory=list)
 
     errors: list[str] = field(default_factory=list)

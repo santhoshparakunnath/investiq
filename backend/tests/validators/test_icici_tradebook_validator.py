@@ -18,7 +18,9 @@ def test_invalid_quantity():
 
     errors = validator.validate(row)
 
-    assert "Quantity must be greater than zero." in errors
+    assert len(errors) == 1
+    assert errors[0].field == "Qty"
+    assert errors[0].message == "Quantity must be greater than zero."
 
 
 def test_invalid_price():
@@ -36,7 +38,10 @@ def test_invalid_price():
 
     errors = validator.validate(row)
 
-    assert "Price must be greater than zero." in errors
+    assert len(errors) == 1
+
+    assert errors[0].field == "Price"
+    assert errors[0].message == "Price must be greater than zero."
 
 def test_invalid_date():
 
@@ -53,7 +58,9 @@ def test_invalid_date():
 
     errors = validator.validate(row)
 
-    assert "Invalid date." in errors    
+    assert len(errors) == 1
+    assert errors[0].field == "Date"
+    assert errors[0].message == "Invalid date."   
 
 def test_missing_required_fields():
 
@@ -65,17 +72,19 @@ def test_missing_required_fields():
 
     assert len(errors) == 6
 
-    assert "Date is required." in errors
-    assert "Stock is required." in errors
-    assert "Action is required." in errors
-    assert "Qty is required." in errors
-    assert "Price is required." in errors
-    assert "Exchange is required." in errors
+    fields = [error.field for error in errors]
+
+    assert "Date" in fields
+    assert "Stock" in fields
+    assert "Action" in fields
+    assert "Qty" in fields
+    assert "Price" in fields
+    assert "Exchange" in fields
 
 def test_invalid_action():
 
     row = {
-        "Date": "31-Feb-2021",
+        "Date": "03-Sep-2021",
         "Stock": "INFY",
         "Action": "test",
         "Qty": 100,
@@ -87,4 +96,7 @@ def test_invalid_action():
 
     errors = validator.validate(row)
 
-    assert "Invalid action." in errors           
+    assert len(errors) == 1
+
+    assert errors[0].field == "Action"
+    assert errors[0].message == "Invalid action."      

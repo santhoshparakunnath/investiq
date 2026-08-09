@@ -2,6 +2,7 @@ import pandas as pd
 
 from app.importers.icici_direct_mapper import ICICIDirectMapper
 from app.importers.base_importer import BaseImporter
+from app.validators.icici_tradebook_validator import ICICIDirectTradebookValidator
 
 
 class ICICIDirectImporter(BaseImporter):
@@ -24,12 +25,19 @@ class ICICIDirectImporter(BaseImporter):
         df = self.load(file)
 
         mapper = ICICIDirectMapper()
+        validator = ICICIDirectTradebookValidator()
 
         transactions = []
 
-        for _, row in df.iterrows():
-            transactions.append(
-                mapper.to_transaction(row)
-            )
+        for index, row in df.iterrows():
+
+                validation_errors = validator.validate(row)
+
+                if validation_errors:
+                    continue
+
+                transactions.append(
+                    mapper.to_transaction(row)
+                )
 
         return transactions
