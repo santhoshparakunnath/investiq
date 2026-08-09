@@ -1,19 +1,15 @@
-from pathlib import Path
-
 import pandas as pd
 
 
 class ICICIDirectImporter:
     """
-    Imports ICICI Direct tradebook files.
+    Reads an ICICI Direct tradebook into a DataFrame.
     """
 
-    def load(self, file_path: str | Path) -> pd.DataFrame:
-
-        file_path = Path(file_path)
+    def load(self, file):
 
         df = pd.read_csv(
-            file_path,
+            file,
             sep="\t",
             engine="python"
         )
