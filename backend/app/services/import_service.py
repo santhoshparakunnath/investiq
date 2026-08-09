@@ -1,6 +1,6 @@
 from fastapi import UploadFile
 
-from app.importers.icici_direct_importer import ICICIDirectImporter
+from app.importers.import_manager import ImportManager
 from app.models.import_result import ImportResult
 from app.models.import_summary import ImportSummary
 
@@ -9,7 +9,8 @@ class ImportService:
 
     def import_file(self, file: UploadFile):
 
-        importer = ICICIDirectImporter()
+        manager = ImportManager()
+        importer = manager.get_importer(file.file)
 
         transactions = importer.import_transactions(file.file)
 

@@ -1,12 +1,15 @@
 import pandas as pd
 
 from app.importers.icici_direct_mapper import ICICIDirectMapper
+from app.importers.base_importer import BaseImporter
 
 
-class ICICIDirectImporter:
+class ICICIDirectImporter(BaseImporter):
     """
     Imports an ICICI Direct tradebook.
     """
+    def can_import(self, file) -> bool:
+        return True
 
     def load(self, file):
 
