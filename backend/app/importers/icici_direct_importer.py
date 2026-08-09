@@ -1,17 +1,32 @@
 import pandas as pd
 
+from app.importers.icici_direct_mapper import ICICIDirectMapper
+
 
 class ICICIDirectImporter:
     """
-    Reads an ICICI Direct tradebook into a DataFrame.
+    Imports an ICICI Direct tradebook.
     """
 
     def load(self, file):
 
-        df = pd.read_csv(
+        return pd.read_csv(
             file,
             sep="\t",
             engine="python"
         )
 
-        return df
+    def import_transactions(self, file):
+
+        df = self.load(file)
+
+        mapper = ICICIDirectMapper()
+
+        transactions = []
+
+        for _, row in df.iterrows():
+            transactions.append(
+                mapper.to_transaction(row)
+            )
+
+        return transactions

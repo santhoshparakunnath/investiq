@@ -11,4 +11,4 @@ service = ImportService()
 async def import_tradebook(
     file: UploadFile = File(...)
 ):
-    return await service.import_file(file)
+    return service.import_file(file)
