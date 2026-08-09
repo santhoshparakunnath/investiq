@@ -2,14 +2,17 @@ from abc import ABC, abstractmethod
 
 
 class BaseValidator(ABC):
+    """
+    Base class for tradebook validators.
+    """
 
     @abstractmethod
     def validate(self, row) -> list[str]:
         """
-        Validates a tradebook row.
+        Validate a tradebook row.
 
         Returns:
-            A list of validation errors.
+            List of validation errors.
             Empty list means the row is valid.
         """
-        pass
+        raise NotImplementedError
