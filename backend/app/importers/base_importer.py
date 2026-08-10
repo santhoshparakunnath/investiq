@@ -16,8 +16,8 @@ class BaseImporter(ABC):
         pass
 
     @abstractmethod
-    def import_transactions(self, file) -> list:
+    def import_data(self, file) -> list:
         """
-        Reads the broker tradebook and returns Transaction objects.
+        Imports data from the broker.
         """
         pass

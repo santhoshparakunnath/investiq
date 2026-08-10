@@ -1,12 +1,12 @@
 from decimal import Decimal
 
 from app.importers.icici_holdings_columns import (
-    ISIN,
-    MARKET_PRICE,
-    MARKET_VALUE,
-    QUANTITY,
     STOCK_NAME,
     SYMBOL,
+    ISIN,
+    QUANTITY,
+    MARKET_PRICE,
+    MARKET_VALUE,
 )
 
 from app.models.holding import Holding
@@ -14,7 +14,7 @@ from app.models.holding import Holding
 
 class ICICIDirectHoldingsMapper:
     """
-    Maps one ICICI Direct holdings row into a Holding.
+    Maps one ICICI Direct Holdings row into a Holding.
     """
 
     def to_holding(self, row) -> Holding:

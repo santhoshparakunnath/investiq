@@ -11,7 +11,12 @@ class Holding:
     """
 
     symbol: str
+    stock_name: str
+    isin: str
 
-    lots: list[TradeLot] = field(default_factory=list)
+    quantity: int
 
     market_price: Decimal = Decimal("0.00")
+    market_value: Decimal = Decimal("0.00")
+
+    lots: list[TradeLot] = field(default_factory=list)
