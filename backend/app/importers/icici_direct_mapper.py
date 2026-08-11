@@ -1,34 +1,67 @@
+from datetime import datetime
 from decimal import Decimal
 
-from app.importers.icici_holdings_columns import (
-    ISIN,
-    MARKET_PRICE,
-    MARKET_VALUE,
+from app.importers.icici_columns import (
+    ACTION,
+    BROKERAGE,
+    DATE,
+    EXCHANGE,
+    ORDER_REF,
+    PRICE,
     QUANTITY,
-    STOCK_NAME,
-    SYMBOL,
+    STOCK,
+    STAMP_DUTY,
+    STT,
+    TRADE_VALUE,
+    TRANSACTION_AND_SEBI,
 )
 
-from app.models.holding import Holding
+from app.models.charges import Charges
+from app.models.enums import TransactionType
+from app.models.transaction import Transaction
 
 
-class ICICIDirectHoldingsMapper:
+class ICICIDirectMapper:
     """
-    Maps one ICICI Direct holdings row into a Holding.
+    Maps one ICICI Direct tradebook row into a Transaction.
     """
 
-    def to_holding(self, row) -> Holding:
+    def to_transaction(self, row) -> Transaction:
 
-        return Holding(
-            symbol=str(row[SYMBOL]).strip(),
+        action = (
+            TransactionType.BUY
+            if str(row[ACTION]).strip().lower() == "buy"
+            else TransactionType.SELL
+        )
 
-            stock_name=str(row[STOCK_NAME]).strip(),
+        charges = Charges(
+            brokerage=Decimal(str(row[BROKERAGE])),
+            stt=Decimal(str(row[STT])),
+            stamp_duty=Decimal(str(row[STAMP_DUTY])),
+            transaction_and_sebi_charges=Decimal(
+                str(row[TRANSACTION_AND_SEBI])
+            ),
+        )
 
-            isin=str(row[ISIN]).strip(),
+        return Transaction(
+            trade_date=datetime.strptime(
+                str(row[DATE]),
+                "%d-%b-%Y"
+            ).date(),
+
+            symbol=str(row[STOCK]).strip(),
+
+            action=action,
 
             quantity=int(row[QUANTITY]),
 
-            market_price=Decimal(str(row[MARKET_PRICE])),
+            price=Decimal(str(row[PRICE])),
 
-            market_value=Decimal(str(row[MARKET_VALUE])),
+            trade_value=Decimal(str(row[TRADE_VALUE])),
+
+            charges=charges,
+
+            exchange=str(row[EXCHANGE]),
+
+            order_number=str(row[ORDER_REF]),
         )
