@@ -24,3 +24,5 @@ class CompletedInvestment:
     total_sale_value: Decimal
 
     realized_profit: Decimal
+
+    return_percentage: Decimal

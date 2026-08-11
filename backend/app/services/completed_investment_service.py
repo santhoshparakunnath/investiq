@@ -18,9 +18,7 @@ class CompletedInvestmentService:
     ) -> list[CompletedInvestment]:
 
         buy_lots: dict[str, list[TradeLot]] = {}
-
         active_investments = {}
-
         completed_investments = []
 
         sorted_transactions = sorted(
@@ -35,10 +33,6 @@ class CompletedInvestmentService:
             if symbol not in buy_lots:
                 buy_lots[symbol] = []
 
-            # -------------------------
-            # BUY
-            # -------------------------
-
             if transaction.action == TransactionType.BUY:
 
                 buy_lots[symbol].append(
@@ -49,9 +43,7 @@ class CompletedInvestmentService:
                     )
                 )
 
-                # Start a new investment lifecycle if necessary.
                 if symbol not in active_investments:
-
                     active_investments[symbol] = {
                         "first_buy_date": transaction.trade_date,
                         "total_quantity": 0,
@@ -66,10 +58,6 @@ class CompletedInvestmentService:
                 active_investments[symbol]["total_cost"] += (
                     transaction.price * transaction.quantity
                 )
-
-            # -------------------------
-            # SELL
-            # -------------------------
 
             elif transaction.action == TransactionType.SELL:
 
@@ -100,7 +88,6 @@ class CompletedInvestmentService:
                     if buy_lot.quantity == 0:
                         buy_lots[symbol].pop(0)
 
-                # The investment is complete when no shares remain.
                 if not buy_lots[symbol]:
 
                     investment = active_investments[symbol]
@@ -112,10 +99,19 @@ class CompletedInvestmentService:
                         final_sell_date - first_buy_date
                     ).days
 
+                    total_cost = investment["total_cost"]
+                    total_sale_value = investment["total_sale_value"]
+
                     realized_profit = (
-                        investment["total_sale_value"]
-                        - investment["total_cost"]
+                        total_sale_value - total_cost
                     )
+
+                    if total_cost > 0:
+                        return_percentage = (
+                            realized_profit / total_cost
+                        ) * 100
+                    else:
+                        return_percentage = 0
 
                     completed_investments.append(
                         CompletedInvestment(
@@ -124,9 +120,10 @@ class CompletedInvestmentService:
                             final_sell_date=final_sell_date,
                             holding_days=holding_days,
                             total_quantity=investment["total_quantity"],
-                            total_cost=investment["total_cost"],
-                            total_sale_value=investment["total_sale_value"],
+                            total_cost=total_cost,
+                            total_sale_value=total_sale_value,
                             realized_profit=realized_profit,
+                            return_percentage=return_percentage,
                         )
                     )
 

@@ -61,6 +61,7 @@ def test_completed_investment_with_full_sale():
     assert investment.total_cost == Decimal("100000.00")
     assert investment.total_sale_value == Decimal("150000.00")
     assert investment.realized_profit == Decimal("50000.00")
+    assert investment.return_percentage == Decimal("50.00")
 
 
 def test_partial_sales_create_one_completed_investment():
@@ -102,6 +103,7 @@ def test_partial_sales_create_one_completed_investment():
     assert investment.total_cost == Decimal("100000.00")
     assert investment.total_sale_value == Decimal("138000.00")
     assert investment.realized_profit == Decimal("38000.00")
+    assert investment.return_percentage == Decimal("38.00")
     assert investment.final_sell_date == date(2022, 1, 1)
 
 

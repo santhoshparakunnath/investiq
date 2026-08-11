@@ -17,6 +17,7 @@ def test_performance_analysis():
             total_cost=Decimal("100000.00"),
             total_sale_value=Decimal("150000.00"),
             realized_profit=Decimal("50000.00"),
+            return_percentage=Decimal("50.00"),
         ),
         CompletedInvestment(
             symbol="TCS",
@@ -27,6 +28,7 @@ def test_performance_analysis():
             total_cost=Decimal("100000.00"),
             total_sale_value=Decimal("80000.00"),
             realized_profit=Decimal("-20000.00"),
+            return_percentage=Decimal("-20.00"),
         ),
     ]
 
