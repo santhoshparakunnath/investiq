@@ -68,12 +68,22 @@ class ICICIDirectTradebookValidator(BaseValidator):
         # Validate Date
         date_value = str(row.get("Date", "")).strip()
 
-        print(f"Validator received date: '{date_value}'")
-
         if date_value:
-            try:
-                datetime.strptime(date_value, "%d-%b-%Y")
-            except ValueError:
+            valid_date = False
+
+            for date_format in (
+                "%d-%b-%Y",
+                "%d-%m-%Y",
+                "%d-%b-%y",
+            ):
+                try:
+                    datetime.strptime(date_value, date_format)
+                    valid_date = True
+                    break
+                except ValueError:
+                    continue
+
+            if not valid_date:
                 validation_errors.append(
                     ValidationError(
                         field="Date",

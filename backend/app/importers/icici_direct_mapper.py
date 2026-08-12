@@ -28,6 +28,24 @@ class ICICIDirectMapper:
 
     def to_transaction(self, row) -> Transaction:
 
+        # ICICI exports may use different date formats.
+        date_value = str(row[DATE]).strip()
+
+        trade_date = None
+
+        for date_format in ("%d-%b-%Y", "%d-%m-%Y", "%d-%b-%y"):
+            try:
+                trade_date = datetime.strptime(
+                    date_value,
+                    date_format
+                ).date()
+                break
+            except ValueError:
+                continue
+
+        if trade_date is None:
+            raise ValueError(f"Invalid trade date: {date_value}")
+
         action = (
             TransactionType.BUY
             if str(row[ACTION]).strip().lower() == "buy"
@@ -44,24 +62,13 @@ class ICICIDirectMapper:
         )
 
         return Transaction(
-            trade_date=datetime.strptime(
-                str(row[DATE]),
-                "%d-%b-%Y"
-            ).date(),
-
+            trade_date=trade_date,
             symbol=str(row[STOCK]).strip(),
-
             action=action,
-
             quantity=int(row[QUANTITY]),
-
             price=Decimal(str(row[PRICE])),
-
             trade_value=Decimal(str(row[TRADE_VALUE])),
-
             charges=charges,
-
-            exchange=str(row[EXCHANGE]),
-
-            order_number=str(row[ORDER_REF]),
+            exchange=str(row[EXCHANGE]).strip(),
+            order_number=str(row[ORDER_REF]).strip(),
         )
