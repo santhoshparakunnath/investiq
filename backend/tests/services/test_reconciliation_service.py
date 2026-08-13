@@ -43,3 +43,17 @@ def test_difference_is_calculated_correctly():
     )
 
     assert result.difference == Decimal("-315")
+
+def test_difference_can_be_classified_as_opening_position_required():
+
+    service = ReconciliationService()
+
+    result = service.reconcile(
+        symbol="ICIBAN",
+        calculated_quantity=Decimal("960"),
+        actual_quantity=Decimal("700"),
+        opening_position_required=True,
+    )
+
+    assert result.difference == Decimal("260")
+    assert result.status == ReconciliationStatus.OPENING_POSITION_REQUIRED

@@ -12,10 +12,11 @@ class ReconciliationService:
     """
 
     def reconcile(
-        self,
-        symbol: str,
-        calculated_quantity: Decimal,
-        actual_quantity: Decimal,
+    self,
+    symbol: str,
+    calculated_quantity: Decimal,
+    actual_quantity: Decimal,
+    opening_position_required: bool = False,
     ) -> PositionReconciliation:
 
         difference = calculated_quantity - actual_quantity
@@ -23,6 +24,10 @@ class ReconciliationService:
         if difference == Decimal("0"):
             status = ReconciliationStatus.RECONCILED
             explanation = "Calculated position matches current holding."
+
+        elif opening_position_required:
+            status = ReconciliationStatus.OPENING_POSITION_REQUIRED
+            explanation = "Historical transaction data does not fully explain the current holding."
 
         else:
             status = ReconciliationStatus.UNEXPLAINED
