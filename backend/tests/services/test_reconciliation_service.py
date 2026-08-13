@@ -57,3 +57,17 @@ def test_difference_can_be_classified_as_opening_position_required():
 
     assert result.difference == Decimal("260")
     assert result.status == ReconciliationStatus.OPENING_POSITION_REQUIRED
+
+def test_difference_can_be_classified_as_corporate_action():
+
+    service = ReconciliationService()
+
+    result = service.reconcile(
+        symbol="HDFBAN",
+        calculated_quantity=Decimal("565"),
+        actual_quantity=Decimal("880"),
+        corporate_action_explains_difference=True,
+    )
+
+    assert result.difference == Decimal("-315")
+    assert result.status == ReconciliationStatus.CORPORATE_ACTION

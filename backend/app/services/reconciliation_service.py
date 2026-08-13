@@ -17,6 +17,7 @@ class ReconciliationService:
     calculated_quantity: Decimal,
     actual_quantity: Decimal,
     opening_position_required: bool = False,
+    corporate_action_explains_difference: bool = False,     
     ) -> PositionReconciliation:
 
         difference = calculated_quantity - actual_quantity
@@ -28,6 +29,10 @@ class ReconciliationService:
         elif opening_position_required:
             status = ReconciliationStatus.OPENING_POSITION_REQUIRED
             explanation = "Historical transaction data does not fully explain the current holding."
+
+        elif corporate_action_explains_difference:
+            status = ReconciliationStatus.CORPORATE_ACTION
+            explanation = ("The position difference is explained by a corporate action.")
 
         else:
             status = ReconciliationStatus.UNEXPLAINED
