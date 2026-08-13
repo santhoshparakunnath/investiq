@@ -5,27 +5,92 @@ from app.models.enums import TransactionType
 
 
 class PositionReconstructionService:
-    """
-    Reconstructs share quantities from BUY and SELL transactions.
 
-    Corporate actions will be added in a later step.
-    """
+    def reconstruct(
+        self,
+        transactions,
+        corporate_actions=None,
+    ) -> dict[str, Decimal]:
 
-    def reconstruct(self, transactions) -> dict[str, Decimal]:
         positions = defaultdict(Decimal)
+        corporate_actions = corporate_actions or []
 
-        for transaction in sorted(
-            transactions,
-            key=lambda transaction: transaction.trade_date,
-        ):
-            if transaction.action == TransactionType.BUY:
-                positions[transaction.symbol] += Decimal(
-                    transaction.quantity
-                )
+        events = []
 
-            elif transaction.action == TransactionType.SELL:
-                positions[transaction.symbol] -= Decimal(
-                    transaction.quantity
+        # Add transactions as events
+        for transaction in transactions:
+            events.append(
+                (
+                    transaction.trade_date,
+                    "TRANSACTION",
+                    transaction,
                 )
+            )
+
+        # Add corporate actions as events
+        for action in corporate_actions:
+            events.append(
+                (
+                    action.action_date,
+                    "CORPORATE_ACTION",
+                    action,
+                )
+            )
+
+        # Process everything chronologically
+        events.sort(key=lambda event: event[0])
+
+        for _, event_type, event in events:
+
+            # -------------------------
+            # Transaction
+            # -------------------------
+            if event_type == "TRANSACTION":
+
+                if event.action == TransactionType.BUY:
+                    positions[event.symbol] += Decimal(event.quantity)
+
+                elif event.action == TransactionType.SELL:
+                    positions[event.symbol] -= Decimal(event.quantity)
+
+            # -------------------------
+            # Corporate Action
+            # -------------------------
+            elif event_type == "CORPORATE_ACTION":
+
+                action_type = event.action_type.value
+                source_symbol = event.source_symbol
+
+                # -------------------------
+                # Split / Bonus
+                # -------------------------
+                if action_type in ["SPLIT", "BONUS"]:
+
+                    if source_symbol in positions:
+                        positions[source_symbol] = (
+                            positions[source_symbol]
+                            * event.ratio_to
+                            / event.ratio_from
+                        )
+
+                # -------------------------
+                # Demerger
+                # -------------------------
+                elif action_type == "DEMERGER":
+
+                    if source_symbol in positions:
+
+                        source_quantity = positions[source_symbol]
+
+                        target_symbol = event.target_symbol
+
+                        if target_symbol:
+                            target_quantity = (
+                                source_quantity
+                                * event.ratio_to
+                                / event.ratio_from
+                            )
+
+                            positions[target_symbol] += target_quantity
 
         return dict(positions)
