@@ -16,7 +16,7 @@ class ICICIDirectHoldingsImporter:
 
     def load(self, file):
 
-        return pd.read_csv(file)
+        return pd.read_csv(file, sep="\t")
 
     def import_holdings(self, file):
 

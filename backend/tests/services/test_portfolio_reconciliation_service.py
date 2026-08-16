@@ -51,3 +51,28 @@ def test_reconciles_calculated_position_against_current_holding():
     assert results[0].calculated_quantity == Decimal("100")
     assert results[0].actual_quantity == Decimal("100")
     assert results[0].status == ReconciliationStatus.RECONCILED
+
+def test_negative_calculated_position_requires_opening_history():
+
+    transactions = [
+        make_transaction(
+            "RELIND",
+            TransactionType.SELL,
+            100,
+            date(2013, 1, 7),
+        ),
+    ]
+
+    holdings = []
+
+    results = PortfolioReconciliationService().reconcile(
+        transactions=transactions,
+        holdings=holdings,
+        corporate_actions=[],
+    )
+
+    assert len(results) == 1
+    assert results[0].symbol == "RELIND"
+    assert results[0].calculated_quantity == Decimal("-100")
+    assert results[0].actual_quantity == Decimal("0")
+    assert results[0].status == ReconciliationStatus.OPENING_POSITION_REQUIRED

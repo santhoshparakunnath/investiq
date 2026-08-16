@@ -16,7 +16,7 @@ def test_loads_all_corporate_actions():
 
     actions = repository.get_all()
 
-    assert len(actions) == 14
+    assert len(actions) == 15
 
 
 def test_finds_actions_for_source_symbol():

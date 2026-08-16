@@ -21,11 +21,8 @@ class PortfolioReconciliationService:
 
         corporate_actions = corporate_actions or []
 
-        calculated_positions = (
-            self.position_reconstruction_service.reconstruct(
-                transactions,
-                corporate_actions,
-            )
+        calculated_positions = self.position_reconstruction_service.reconstruct(
+            transactions, corporate_actions
         )
 
         actual_positions = {
@@ -49,10 +46,14 @@ class PortfolioReconciliationService:
                 Decimal("0"),
             )
 
+
+            opening_position_required = calculated_quantity < Decimal("0")
+
             result = self.reconciliation_service.reconcile(
-                symbol=symbol,
-                calculated_quantity=calculated_quantity,
-                actual_quantity=actual_quantity,
+            symbol=symbol,
+            calculated_quantity=calculated_quantity,
+            actual_quantity=actual_quantity,
+            opening_position_required=opening_position_required,
             )
 
             results.append(result)
